@@ -1,7 +1,7 @@
 {
     "name": "Cristina",
     "short_name": "ME",
-    "start_url": "/index.html",
+    "start_url": "/Cris/index.html",
     "display": "standalone",
     "background_color": "#ffe0ec",
     "theme_color": "#d63384",
