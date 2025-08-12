@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cristina</title>
+
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" type="image/png" sizes="192x192" href="" />
+    <link rel="apple-touch-icon" href="/foto1.jpg" />
+    <meta name="theme-color" content="#d63384" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+    <style>
+        :root {
+        --rosa: #ffe0ec;
+        --lavanda: #f9f0ff;
+        --morado: #6a0dad;
+        --texto: #333;
+        }
+        html, body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, var(--rosa), var(--lavanda));
+        color: var(--texto);
+        min-height: 100vh;
+        overflow-x: hidden;
+        }
+        body {
+        display: flex;
+        justify-content: center;
+        align-items: start;
+        padding: 2rem 1rem;
+        }
+        .container {
+        text-align: center;
+        padding: 2rem;
+        background: white;
+        color: var(--texto);
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        max-width: 600px;
+        width: 100%;
+        position: relative;
+        z-index: 1000;
+        }
+        h1 {
+        font-size: 2rem;
+        color: #d63384;
+        }
+        .subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+        color: var(--morado);
+        }
+        button {
+        background-color: #d63384;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.3s ease;
+        margin: 0.5rem;
+        }
+        button:hover {
+        background-color: var(--morado);
+        }
+        #surprise {
+        margin-top: 2rem;
+        animation: slideFade 0.8s ease-out;
+        }
+        .hidden {
+        display: none;
+        }
+        .quote-box {
+        background: #f8e1ff;
+        border-left: 4px solid var(--morado);
+        padding: 1rem;
+        margin: 1rem 0;
+        font-style: italic;
+        color: #6a0dad;
+        text-align: left;
+        border-radius: 8px;
+        }
+        .carousel {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        }
+        .carousel img {
+        position: absolute;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+        }
+        .carousel img.active {
+        opacity: 1;
+        }
+        @keyframes slideFade {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+        }
+        canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 0;
+        }
+        @media (max-width: 600px) {
+        .carousel { height: 200px; }
+        h1 { font-size: 1.6rem; }
+        .subtitle { font-size: 1rem; }
+        }
+
+
+        .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center, rgba(255, 255, 255, 0.9), rgba(255, 192, 203, 0.3));
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+        }
+
+        .modal-content {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 16px;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 0 25px rgba(255, 182, 193, 0.6);
+        font-size: 1.1rem;
+        animation: fadeIn 0.4s ease;
+        position: relative;
+        }
+
+        .close-button {
+        position: absolute;
+        top: 12px;
+        right: 16px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #888;
+        }
+
+        .hidden {
+        display: none;
+        }
+
+        @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+        }
+
+        canvas#confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.8;
+            mix-blend-mode: screen;
+        }
+
+    </style>
+</head>
+    <body>
+<canvas id="confettiCanvas"></canvas>
+<div class="container">
+    <h1>🌟 ¡Hola, Cristina!</h1>
+    <p class="subtitle">Hoy celebramos tu esencia única, tu luz y tu forma especial de ver el mundo ✨</p>
+    <div id="mantraBox" class="quote-box"></div>
+    <button id="btnSurprise">Ver Mensaje</button>
+    <button onclick="mostrarMensajeHora()">¿Cómo me siento hoy?</button>
+    <div id="modalEmocional" class="modal hidden">
+    <div class="modal-content">
+        <span class="close-button" onclick="cerrarModal()">&times;</span>
+        <p id="mensajeEmocional"></p>
+    </div>
+</div>
+    <div id="surprise" class="hidden">
+        <p>🌈 Cristina, cada día es una nueva página en tu historia. Que tus ideas florezcan, que tus pasos te lleven a lugares mágicos, y que nunca olvides lo valiosa que eres. El mundo está lleno de maravillas esperando por ti. ¡Confía en tu intuición y sigue brillando! ✨</p>
+        
+        <div class="quote-box">
+        <p><strong>RECUERDA:</strong> las estrellas no compiten entre sí, simplemente brillan.<br>
+        Sé tú misma, sin miedo, sin prisa. Tu luz es suficiente.<br>
+        <strong>¡El universo está de tu lado, Cristina!</strong></p>
+        </div>
+
+        <div class="carousel" id="carousel">
+        <img src="icon-192.jpg" class="active" alt="Globos dorados" />
+        <img src="foto1.jpg" alt="Cartel azul y dorado" />
+        <img src="foto2.jpg" alt="Decoración negra y plateada" />
+        <img src="Imagen de WhatsApp 2025-08-03 a las 14.10.20_17f233a7.jpg" alt="Fondo colorido" />
+        <img src="Imagen de WhatsApp 2025-08-03 a las 14.10.20_ab890648.jpg" alt="Fondo colorido" />
+        <img src="Imagen de WhatsApp 2025-08-03 a las 14.10.20_d0d53e66.jpg" alt="Fondo colorido" />
+        <img src="Imagen de WhatsApp 2025-08-03 a las 14.10.20_d4470167.jpg" alt="Fondo colorido" />
+        </div>
+
+        <div class="quote-box" id="contadorDias"></div>
+    </div>
+
+    <audio id="bgMusic" src="musica.mp3" preload="auto" autoplay loop></audio>
+</div>
+
+
+<script>
+    const btn = document.getElementById('btnSurprise');
+    const surprise = document.getElementById('surprise');
+    const music = document.getElementById('bgMusic');
+    const images = document.querySelectorAll('#carousel img');
+    const contadorDias = document.getElementById("contadorDias");
+    const mantraBox = document.getElementById("mantraBox");
+
+    let current = 0;
+    let interval;
+    let confettiRunning = false;
+
+    btn.addEventListener('click', () => {
+        surprise.classList.toggle('hidden');
+        if (!surprise.classList.contains('hidden')) {
+            music.currentTime = 30;
+            music.volume = 1.0;
+            music.play();
+            startCarousel();
+        } else {
+            music.pause();
+            music.currentTime = 0;
+            clearInterval(interval);
+        }
+    });
+
+    function startCarousel() {
+        interval = setInterval(() => {
+            images[current].classList.remove('active');
+            current = (current + 1) % images.length;
+            images[current].classList.add('active');
+        }, 3000);
+    }
+
+    function launchConfetti() {
+        const canvas = document.getElementById('confettiCanvas');
+        const ctx = canvas.getContext('3d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const confetti = Array.from({ length: 100 }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 8 + 4,
+            speed: Math.random() * 3 + 2,
+            color: `hsl(${Math.random() * 360}, 70%, 70%)`,
+            angle: Math.random() * 360
+        }));
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confetti.forEach(p => {
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.angle * Math.PI / 180);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                ctx.restore();
+            });
+            update();
+        }
+
+        function update() {
+            confetti.forEach(p => {
+                p.y += p.speed;
+                p.angle += 5;
+                if (p.y > canvas.height) {
+                    p.y = -10;
+                    p.x = Math.random() * canvas.width;
+                }
+            });
+        }
+
+        function animate() {
+            draw();
+            requestAnimationFrame(animate);
+        }
+
+        if (!confettiRunning) {
+            confettiRunning = true;
+            animate();
+        }
+    }
+    launchConfetti();
+
+    const mantras = [
+        "Tu imaginación es un portal hacia mundos increíbles 🌌",
+        "La calma también es fuerza 🌿",
+        "Cada día es una nueva oportunidad para descubrirte 🌞",
+        "Tu voz merece ser escuchada 🎤",
+        "La magia está en los detalles ✨",
+        "Eres un universo en expansión 🌠",
+        "Lo que te hace diferente, te hace especial 🌈",
+        "No necesitas permiso para brillar 💫",
+        "Tu intuición sabe el camino 🧭",
+        "La ternura también transforma 💖",
+        "Los sueños grandes comienzan con pasos pequeños 👣",
+        "Tu mirada tiene el poder de cambiar perspectivas 👁️",
+        "La curiosidad es tu aliada más valiente 🐾",
+        "Eres arte en movimiento 🎨",
+        "El silencio también habla de ti 🌙",
+        "Confía en lo que te hace vibrar 🔮"
+    ];
+    let mantraIndex = 0;
+
+    function rotateMantras() {
+        mantraBox.textContent = mantras[mantraIndex];
+        mantraIndex = (mantraIndex + 1) % mantras.length;
+    }
+    rotateMantras();
+    setInterval(rotateMantras, 5000);
+
+// 🎂 Contador hacia el cumpleaños 17 - 20 junio 2026
+    function actualizarContador() {
+        const fechaCumple = new Date("2026-06-20T00:00:00");
+        const ahora = new Date();
+        const diff = fechaCumple - ahora;
+
+        if (diff <= 0) {
+            contadorDias.textContent = "🎉 ¡Hoy es el gran día! Cristina cumple 17 🎂";
+            mostrarCelebracionCumple(); // Activa el efecto visual
+            return;
+        }
+
+        const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutos = Math.floor((diff / (1000 * 60)) % 60);
+        const segundos = Math.floor((diff / 1000) % 60);
+
+        contadorDias.innerHTML =
+            `<strong>🕒 Faltan:</strong> ${dias} día${dias !== 1 ? 's' : ''}, ${horas}h ${minutos}m ${segundos}s 🎉`;
+    }
+
+    // 🎉 Efecto visual de cumpleaños
+    function mostrarCelebracionCumple() {
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = 0;
+        overlay.style.left = 0;
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.background = 'radial-gradient(circle at center, #ffccff, #660066)';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.zIndex = 9999;
+        overlay.style.animation = 'fadeIn 1s ease-in-out';
+
+        const mensaje = document.createElement('h1');
+        mensaje.textContent = "🎉 ¡Feliz cumpleaños 17, Cristina! 🌟";
+        mensaje.style.color = 'white';
+        mensaje.style.fontSize = '3em';
+        mensaje.style.textAlign = 'center';
+        mensaje.style.fontFamily = 'cursive';
+        mensaje.style.textShadow = '2px 2px 10px #ff69b4';
+
+        overlay.appendChild(mensaje);
+        document.body.appendChild(overlay);
+
+        launchConfetti(); // Tu función de confetti ya existente
+    }
+
+    // 🎊 Confetti mágico
+    function launchConfetti() {
+        const canvas = document.createElement('canvas');
+        canvas.id = 'confettiCanvas';
+        canvas.style.position = 'fixed';
+        canvas.style.top = 0;
+        canvas.style.left = 0;
+        canvas.style.width = '100vw';
+        canvas.style.height = '100vh';
+        canvas.style.zIndex = 9998;
+        document.body.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const confetti = Array.from({ length: 100 }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 8 + 4,
+            speed: Math.random() * 3 + 2,
+            color: `hsl(${Math.random() * 360}, 70%, 70%)`,
+            angle: Math.random() * 360
+        }));
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confetti.forEach(p => {
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.angle * Math.PI / 180);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                ctx.restore();
+            });
+            update();
+        }
+        function update() {
+            confetti.forEach(p => {
+                p.y += p.speed;
+                p.angle += 5;
+                if (p.y > canvas.height) {
+                    p.y = -10;
+                    p.x = Math.random() * canvas.width;
+                }
+            });
+        }
+        function animate() {
+            draw();
+            requestAnimationFrame(animate);
+        }
+        animate();
+    }
+    // ⏱️ Activación automática
+    actualizarContador();
+    setInterval(actualizarContador, 1000);
+
+    // 🎉 Efecto visual de cumpleaños
+    function mostrarCelebracionCumple() {
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = 0;
+        overlay.style.left = 0;
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.background = 'radial-gradient(circle at center, #ffccff, #660066)';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.zIndex = 9999;
+        overlay.style.animation = 'fadeIn 1s ease-in-out';
+
+        const mensaje = document.createElement('h1');
+        mensaje.textContent = "🎉 ¡Feliz cumpleaños 17, Cristina! 🌟";
+        mensaje.style.color = 'white';
+        mensaje.style.fontSize = '3em';
+        mensaje.style.textAlign = 'center';
+        mensaje.style.fontFamily = 'cursive';
+        mensaje.style.textShadow = '2px 2px 10px #ff69b4';
+
+        overlay.appendChild(mensaje);
+        document.body.appendChild(overlay);
+
+        launchConfetti(); // Tu función de confetti ya existente
+    }
+
+    // ⏱️ Activación
+    actualizarContador(); // Contador real hacia el 20 de junio
+    setInterval(actualizarContador, 1000);
+
+
+    function mostrarMensajeHora() {
+        const mensajes = [
+            "Tu corazón sabe más de lo que imaginas. Escúchalo con ternura 💗",
+            "No necesitas tener todas las respuestas hoy. Solo sigue caminando 🌿",
+            "Incluso en los días nublados, tu esencia brilla desde dentro ☁️✨",
+            "La tristeza no te define. Es solo una estación en tu viaje emocional 🌧️",
+            "Tu sensibilidad es una fuerza, no una debilidad 🌸",
+            "A veces, descansar también es avanzar 🛌",
+            "No estás rota. Estás creciendo en direcciones invisibles 🌱",
+            "Tu valor no depende de lo que logres, sino de quién eres 💎",
+            "El mundo necesita tu forma única de sentir y pensar 🌍",
+            "Está bien no estar bien. Lo importante es seguir siendo tú 🌙",
+            "Cada emoción trae un mensaje. Escúchalo sin juicio 📬",
+            "Tu luz no se apaga por estar en pausa. Solo se está recargando 🔋",
+            "La ternura contigo misma es el primer paso hacia la sanación 🕊️",
+            "No hay prisa. Tu ritmo es perfecto para ti ⏳",
+            "Incluso cuando dudas, sigues siendo valiente 🦋",
+            "Hoy puede ser el inicio de algo hermoso, aunque aún no lo veas 🌅"
+        ];
+        const mensaje = mensajes[Math.floor(Math.random() * mensajes.length)];
+        document.getElementById("mensajeEmocional").textContent = mensaje;
+        document.getElementById("modalEmocional").classList.remove("hidden");
+    }
+
+    function cerrarModal() {
+        document.getElementById("modalEmocional").classList.add("hidden");
+    }
+
+    // Service Worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js')
+            .then(() => console.log('Service Worker registrado'))
+            .catch(err => console.error('Error al registrar SW:', err));
+    }
+</script>
+
+    </body>
+</html>
